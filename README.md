@@ -1,19 +1,18 @@
 # SlapperParticle
 
-SlapperParticle is an archived PocketMine-MP plugin that draws white particles around entities from the historical Slapper plugin.
+SlapperParticle displays two orbiting white dust particles around each Slapper human entity in every loaded world.
 
-## Compatibility
+## Requirements
 
-The manifest declares PocketMine-MP API `1.0.0`. The source imports the old `PluginTask`, `pocketmine\level\particle` and `slapper\entities\SlapperHuman` classes. It has not been ported to Axolotl-PM 5 or tested on a current server. Do not install this source on a production Axolotl-PM server.
+- Axolotl-PM with server API 5.0.0 as the minimum.
+- The [Slapper plugin](https://github.com/ReinfyTeam/Slapper), which provides the human entities used by this plugin.
 
-## Historical behavior
+The manifest declares API 5.0.0 as the minimum. CI checks PHPStan and builds against pinned API 5.0.0 and 5.49.2 sources; it does not claim every API 5.x revision has been tested. See the [build workflow](.github/workflows/build.yml) for the exact source revisions used by each run.
 
-The plugin scans loaded levels for Slapper human entities and schedules a repeating particle task. It has no commands or configuration. The Slapper dependency is visible in source but is not declared in `plugin.yml`, so the plugin can fail to load or run when that dependency is unavailable.
+## Build
 
-## Development status
+The [build workflow](.github/workflows/build.yml) runs PHP syntax and orbit tests, PHPStan at its maximum level, and builds and inspects the plugin PHAR with [DevTools](https://github.com/NhanAZ/DevTools). Its runtime smoke test starts the built artifact with the pinned Slapper dependency on an isolated Axolotl-PM server.
 
-This repository has no CI build, DevTools PHAR, runtime test or release verified for Axolotl-PM 5. A port would need a maintained Slapper equivalent, updated particle and scheduler APIs, an explicit dependency declaration and runtime testing before any compatibility claim.
+## Source and reuse
 
-No license file is present in this repository. The absence of a license should be resolved with the rights holder before redistributing a modified build. The historical author information is limited to the source and repository history.
-
-For questions about the NhanAZ ecosystem, use [NhanAZ Discord](https://discord.gg/j2X83ujT6c).
+The original source commit is attributed to NhanAZ in this repository's Git history. This repository does not declare a separate license; publication of a release does not grant permission to reuse the source outside the rights holder's authorization.

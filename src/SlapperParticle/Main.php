@@ -1,60 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SlapperParticle;
 
-use pocketmine\scheduler\PluginTask;
-use pocketmine\{Player, Server};
-use pocketmine\plugin\{Plugin, PluginBase};
-use pocketmine\level\particle\{DustParticle, CriticalParticle};
+use pocketmine\color\Color;
 use pocketmine\math\Vector3;
-use pocketmine\event\Listener;
+use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\ClosureTask;
+use pocketmine\world\particle\DustParticle;
 use slapper\entities\SlapperHuman;
 
-class Main extends PluginBase implements Listener {
+final class Main extends PluginBase{
+	protected function onEnable() : void{
+		$this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function() : void{
+			$this->spawnParticles();
+		}), 10);
+	}
 
-public function onEnable(){
-$this->getServer()->getPluginManager()->registerEvents($this, $this);
-$this->getServer()->getScheduler()->scheduleRepeatingTask(new Particle($this), 0);
-    }
-}
+	private function spawnParticles() : void{
+		foreach($this->getServer()->getWorldManager()->getWorlds() as $world){
+			foreach($world->getEntities() as $entity){
+				if(!$entity instanceof SlapperHuman){
+					continue;
+				}
 
-class Particle extends PluginTask implements Listener {
+				$this->spawnParticlesForEntity($entity);
+			}
+		}
+	}
 
-public function __construct(Main $plugin){
-$this->plugin = $plugin;
-$this->r = 0;
-parent::__construct($plugin);
-}
+	private function spawnParticlesForEntity(SlapperHuman $entity) : void{
+		$world = $entity->getWorld();
+		$position = $entity->getPosition();
+		$phase = $this->getServer()->getTick();
+		$particle = new DustParticle(new Color(255, 255, 255));
 
-public function onRun($tick){
-if($this->r < 0){
-$this->r++;
-return true;
-}
-$levels = $this->plugin->getServer()->getLevels();
-foreach($levels as $l){
-$entity = $l->getEntities();
-foreach($entity as $e){
-if($e instanceof SlapperHuman){
-$x = $e->getX();
-$y = $e->getY();
-$z = $e->getZ();
-$level = $this->plugin->getServer()->getDefaultLevel();
-$hypo = 0.8;
-$a = cos(deg2rad($this->r/0.09))* $hypo;
-$b = sin(deg2rad($this->r/0.09))* $hypo;
-$time = microtime(true) - \pocketmine\START_TIME;
-$seconds = floor($time % 20);
-$up = $seconds/5;
-$p1 = new Vector3($x - $a, $y + $up, $z - $b);
-$p2 = new Vector3($x - $b, $y + $up, $z - $a);
-$pl1 = new DustParticle(($p1),255, 255, 255);
-$pl2 = new DustParticle(($p2),255, 255, 255);
-$level->addParticle($pl1);
-$level->addParticle($pl2);
-$this->r++;
-                }
-            }
-        }
-    }
+		foreach(ParticleOrbit::positions($position->x, $position->y, $position->z, $phase) as [$x, $y, $z]){
+			$world->addParticle(new Vector3($x, $y, $z), $particle);
+		}
+	}
 }
