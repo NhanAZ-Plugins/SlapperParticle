@@ -74,7 +74,7 @@ jobs:
           persist-credentials: false
       - name: Build the plugin and run PHPStan at maximum level
         id: build
-        uses: NhanAZ/DevTools@8d13a75aaf4f330fdbd93737d58be9cacc41e262
+        uses: NhanAZ/DevTools@v2
         with:
           phpstan: max
           phpstan-server: .devtools-dependencies/axolotl-pm
@@ -92,8 +92,6 @@ jobs:
             ${{ steps.build.outputs.phar }}
             ${{ steps.build.outputs.phar }}.sha256
           if-no-files-found: error
-          retention-days: 14
-
   runtime-smoke:
     name: Start the built plugin with Slapper on Axolotl-PM 5.49.2
     needs: [source-checks, build]
