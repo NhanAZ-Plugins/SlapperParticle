@@ -74,7 +74,7 @@ jobs:
           persist-credentials: false
       - name: Build the plugin and run PHPStan at maximum level
         id: build
-        uses: NhanAZ/DevTools@v2
+        uses: AxolotlBucketLabs/DevTools@v3
         with:
           phpstan: max
           phpstan-server: .devtools-dependencies/axolotl-pm
